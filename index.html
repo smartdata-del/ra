@@ -32,7 +32,7 @@
 
         // Cargar el archivo .gltf
         const gltfLoader = new THREE.GLTFLoader();
-        gltfLoader.load('/files/scene.gltf', (gltf) => {
+        gltfLoader.load('files/scene.gltf', (gltf) => {
             scene.add(gltf.scene);
         }, undefined, (error) => {
             console.error(error);
