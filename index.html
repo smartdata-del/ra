@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renderizar OBJ</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; width: 100vw; height: 100vh; } /* Ajustar a toda la ventana */
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/r128/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/r128/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+    <script>
+        // Escena, cámara y renderizador
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Agregar luces a la escena
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Luz ambiental
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1); // Luz direccional
+        directionalLight.position.set(0, 1, 1).normalize();
+        scene.add(directionalLight);
+
+        // Cargar el archivo .gltf
+        const gltfLoader = new THREE.GLTFLoader();
+        gltfLoader.load('/files/scene.gltf', (gltf) => {
+            scene.add(gltf.scene);
+        }, undefined, (error) => {
+            console.error(error);
+        });
+
+        scene.background = new THREE.Color(0xeeeeee);
+
+        // Configurar la cámara
+        camera.position.set(0, 1, 3); // Ajusta la posición de la cámara para ver el objeto
+
+        // Añadir controles de órbita
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true; // Para que los movimientos sean más suaves
+        controls.dampingFactor = 0.25;
+        controls.enableZoom = true;
+
+        // Función de animación
+        const animate = function () {
+            requestAnimationFrame(animate);
+            controls.update(); // Actualizar los controles en cada frame
+            renderer.render(scene, camera);
+        };
+
+        animate();
+
+        // Hacer la visualización responsive
+        window.addEventListener('resize', () => {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            renderer.setSize(width, height);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        });
+    </script>
+</body>
+</html>
